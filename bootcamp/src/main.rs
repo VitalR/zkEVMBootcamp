@@ -31,8 +31,26 @@ fn fizz_buzz() {
     println!("The number of times 'fizz buzz' occurred: {}", counter);
 }
 
+fn fizz_buzz_2() {
+    let mut counter = 0;
+    for n in 1..=301 {
+        match (n % 3, n % 5) {
+            (0, 0) => {
+                println!("fizz buzz");
+                counter += 1;
+            },
+            (0, _) => println!("fixzz"),
+            (_, 0) => println!("buzz"),
+            _ => (),
+        }
+    }
+
+    println!("The number of times 'fizz buzz' occurred: {}", counter);
+}
+
 fn main() {
     println!("Hello, this is fizz buzz!");
 
     fizz_buzz();
+    fizz_buzz_2();
 }
