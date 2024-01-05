@@ -4,28 +4,49 @@
 // Why not? What should we do to fix it?
 // Execute `rustlings hint errors3` for hints!
 
-// I AM NOT DONE
+
 
 use std::num::ParseIntError;
 
-fn main() {
-    let mut tokens = 100;
-    let pretend_user_input = "8";
+#[derive(Debug)]
+struct MyParseIntError;
 
-    let cost = total_cost(pretend_user_input)?;
-
-    if cost > tokens {
-        println!("You can't afford that many!");
-    } else {
-        tokens -= cost;
-        println!("You now have {} tokens.", tokens);
+impl std::fmt::Display for MyParseIntError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Failed to parse integer")
     }
 }
 
-pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
+impl std::error::Error for MyParseIntError {}
+
+fn main() -> Result<(), MyParseIntError> {
+    let mut tokens = 100;
+    let pretend_user_input = "8";
+
+    match total_cost(pretend_user_input) {
+        Ok(cost) => {
+            if cost > tokens {
+                println!("You can't afford that many!");
+                // Return a custom error when the cost is too high.
+                Err(MyParseIntError)
+            } else {
+                tokens -= cost;
+                println!("You now have {} tokens.", tokens);
+                Ok(())
+            }
+        }
+        Err(err) => {
+            println!("Error parsing input: {:?}", err);
+            // Return the original error as a custom error.
+            Err(MyParseIntError)
+        }
+    }
+}
+
+pub fn total_cost(item_quantity: &str) -> Result<i32, MyParseIntError> {
     let processing_fee = 1;
     let cost_per_item = 5;
-    let qty = item_quantity.parse::<i32>()?;
+    let qty = item_quantity.parse::<i32>().map_err(|_| MyParseIntError)?;
 
     Ok(qty * cost_per_item + processing_fee)
 }
